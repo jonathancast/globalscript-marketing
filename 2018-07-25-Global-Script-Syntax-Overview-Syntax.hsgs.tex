@@ -1,0 +1,117 @@
+\documentclass{article}
+\title{Global Script Syntax Overview, Part 1 (Syntax.hsgs)}
+\author{Jonathan Cast\\$<$\texttt{jonathanccast\@fastmail.fm}$>$}
+
+\usepackage{haskell}
+
+\begin{document}
+
+For this video, I'm going to go through some actual Global Script code and point out significant features of the syntax.
+
+Disclaimer up-front:
+This is based on my first cut of the language.
+All of this syntax is implemented and does work,
+but my second implementation, in progress, will change some of the details.
+Also, it's a rough implementation, so a number of features I do plan to implement are missing,
+such as operator precedence.
+
+Explain basic structure of the file, so people know what they're looking at.
+
+Or - consider this - clean up the file so it's a little more like real Global Script?
+
+There's no type-checker,
+so any function that should be a type-class method has to be replaced with a qualified function.
+But it's close enough to Global Script to point out some interesting ideas.
+
+This file is the parser for the new Global Script implementation.
+
+Point out Unicode λ character.
+
+Single quotes for variables being defined.
+Any variable that's being defined, anywhere in the language, has a single quote in front of it.
+Then you remove that single quote when you use the variable.
+This solves the problem of telling variables from constructor names in patterns;
+it's also compatible with having views in the language, which Global Script does,
+and it helps with ambiguities in a couple of other places.
+
+Point out periods for lambda-like functions.
+
+Periods don't interfere with qualified names because qualified names cannot contain whitespace.
+
+Unary operators.
+
+Lambda-like functions are just library functions.
+
+Eventually, we'll have a for function with a type-class-qualified type,
+but since there's not type-checker, we have to use a qualified function for now.
+
+Of course, being able to use a qualified function for something like for is a feature.
+
+You have to modify the hsgs2hs program to define a new foo.for function now,
+in order to specify how the ← operator will work.
+The type-class based for function will eventually remove the need for that.
+
+Eventually, you'll be able to define third-party functions with a syntax similar to for in a library.
+
+No way to use just an expression as a generator in a for.
+We could allow it, but it's not a syntax I'm fond of.
+Use \<*>\> instead or use \<\_ ←\>.
+
+You can use - or . to separate words.
+
+No precedence, so \<*>\> isn't higher precedence than \<<|>\>.
+When precedence is implemented, the parentheses will go away.
+Also eventually we'll support : for over-riding precedence based on layout.
+
+String syntax.
+Copied from Perl 5.
+Several different kinds of strings are supported;
+major ones are;
+qq{} - machine readable string
+log{} - human readable markup string
+r{} - single character
+
+qq{} - program logic based on this
+log{} - only read by a human being (or AI)
+
+unit is a better term than return or pure.
+
+; is required when there are multiple generators but eventually not when there's only one.
+
+\<\#f\> field / method extraction syntax.
+\<\#0\>, \<\#1\>, etc. for tuples.
+Single quotes are useful here - we know the next thing is a variable name so we're not surprised.
+Tuples are literally just records whose fields are named 0, 1, 2, etc.
+Extensible tuples.
+
+analyze/case for case analysis.
+analyze is just a library function, with two arguments.
+case is also just a library function,
+but it takes a pattern as the first argument,
+and it has an else clause argument,
+which is normally another call to case,
+and is undefined if you omit it.
+
+Discuss how insufficient case errors work.
+analyze with no cases.
+First case (after case nothing).
+Point out the case below that (in expr.function.w) with \<order-of-being.pattern : 's1\>,
+where the head will be evaluated in the missing case error.
+
+Call out the ← unit pattern and show off ∝.
+
+Qualified constructor names.
+
+Record literal syntax.
+
+Monomorphism restriction based on ∝ vs =.
+
+\<\&\&\> vs \<∧\>
+
+list.∈ will short-circuit
+
+log.dstr;
+gsvar.fmt-atom should return a log.t,
+but doesn't because it's written in Haskell
+
+\end{document}
